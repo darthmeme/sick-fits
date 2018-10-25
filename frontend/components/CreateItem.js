@@ -73,7 +73,7 @@ export default class CreateItem extends Component {
               e.preventDefault()
               
               const res = await createItem()
-              Router.push({ pathname: '/item', query: { item: res.data.createItem.id } })
+              Router.push({ pathname: '/item', query: { id: res.data.createItem.id } })
             }
           }>
             <ErrorMessage error={error} />

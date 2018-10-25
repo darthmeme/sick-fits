@@ -56,7 +56,7 @@ export default class SingleItem extends Component {
                 <title>Sick Fits | {item.name}</title>
               </Head>
               <img src={item.largeImage} />
-              <div class="details">
+              <div className="details">
                 Viewing {item.name}
                 <p>{item.description}</p>
               </div>
