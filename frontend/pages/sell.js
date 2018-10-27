@@ -1,8 +1,11 @@
 import CreateItem from '../components/CreateItem'
+import Gate from '../components/Gate';
 
 const Sell = () => (
   <div>
-    <CreateItem />
+    <Gate>
+      <CreateItem />
+    </Gate>
   </div>
 )
 

@@ -3,10 +3,22 @@ const jwt = require('jsonwebtoken')
 const { randomBytes } = require('crypto')
 const { promisify } = require('util')
 const { transport, makeANiceEmail } = require('../mail')
+const { hasPermission } = require('../utils')
 
 const mutations = {
   async createItem (parent, args, ctx, info) {
-    const item = await ctx.db.mutation.createItem({ data: { ...args } }, info)
+    if (!ctx.request.userId) throw new Error('You must be logged in to do that')
+
+    const item = await ctx.db.mutation.createItem({
+      data: { 
+        ...args, 
+        user: {
+          connect: {
+            id: ctx.request.userId
+          }
+        }
+      }
+    }, info)
 
     return item
   },
@@ -18,9 +30,17 @@ const mutations = {
   },
   async deleteItem (parent, args, ctx, info) {
     const where = { id: args.id }
-    const item = await ctx.db.query.item({ where }, `{ id, name }`)
+    const item = await ctx.db.query.item({ where }, `{ id, name, user { id } }`)
+    const ownsItem = item.user.id === ctx.request.userId
+    const hasPermission = ctx.request.user.permissions.some(
+      permission => ['ADMIN', 'ITEM_DELETE'].includes(permission)
+    )
     
-    return ctx.db.mutation.deleteItem({ where }, info)
+    if (ownsItem || hasPermission) {
+      return ctx.db.mutation.deleteItem({ where }, info)
+    } else {
+      throw new Error('Permission denied')
+    }
   },
   async signup (parent, args, ctx, info) {
     args.email = args.email.toLowerCase()
@@ -123,6 +143,16 @@ const mutations = {
     })
 
     return updatedUser
+  },
+  async updatePermissions (parent, args,ctx, info) {
+    if (!ctx.request.userId) throw new Error('Must be logged in')
+
+    hasPermission(ctx.request.user, ['ADMIN', 'PERMISSION_UPDATE'])
+
+    return ctx.db.mutation.updateUser({  
+      where: { id: args.id },
+      data: { permissions: { set: args.permissions }}
+    }, info)
   }
 };
 
