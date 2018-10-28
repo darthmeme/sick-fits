@@ -144,7 +144,7 @@ const mutations = {
 
     return updatedUser
   },
-  async updatePermissions (parent, args,ctx, info) {
+  async updatePermissions (parent, args, ctx, info) {
     if (!ctx.request.userId) throw new Error('Must be logged in')
 
     hasPermission(ctx.request.user, ['ADMIN', 'PERMISSION_UPDATE'])
@@ -153,6 +153,46 @@ const mutations = {
       where: { id: args.id },
       data: { permissions: { set: args.permissions }}
     }, info)
+  },
+  async addToCart (parent, args, ctx, info) {
+    if (!ctx.request.userId) throw new Error('Must be logged in')
+
+    const [existingCartItem] = await ctx.db.query.cartItems({
+      where: {
+        user: { id: ctx.request.userId },
+        item: { id: args.id }
+      }
+    })
+
+    if (existingCartItem) {
+      return ctx.db.mutation.updateCartItem({
+        where: {
+          id: existingCartItem.id
+        },
+        data: {
+          quantity: existingCartItem.quantity + 1
+        }
+      }, info)
+    }
+
+    return ctx.db.mutation.createCartItem({
+      data: {
+        user: { connect: { id: ctx.request.userId } },
+        item: { connect: { id: args.id } }
+      }
+    }, info)
+  },
+  async removeFromCart (parent, args, ctx, info) {
+    const [cartItem] = await ctx.db.query.cartItems({
+      where: {
+        user: { id: ctx.request.userId },
+        id: args.id
+      }
+    })
+
+    if (!cartItem) throw new Error('Cart item does not exist or belong to user')
+
+    return ctx.db.mutation.deleteCartItem({ where: { id: args.id } }, info)
   }
 };
 

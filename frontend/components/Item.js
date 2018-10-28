@@ -6,6 +6,7 @@ import PriceTag from './styles/PriceTag'
 import Link from 'next/link'
 import formatMoney from '../lib/formatMoney'
 import DeleteItem from './DeleteItem'
+import AddToCart from './AddToCart'
 
 export default class Item extends Component {
   static propTypes = {
@@ -26,7 +27,7 @@ export default class Item extends Component {
         <p>{item.description}</p>
         <div>
           <Link href={{ pathname: '/update', query: { id: item.id } }}><a>Edit ✏️</a></Link>
-          <button>Add to card</button>
+          <AddToCart id={item.id} />
           <DeleteItem id={item.id} />
         </div>
         <PriceTag>{formatMoney(item.price)}</PriceTag>
