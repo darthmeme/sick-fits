@@ -4,6 +4,7 @@ const { randomBytes } = require('crypto')
 const { promisify } = require('util')
 const { transport, makeANiceEmail } = require('../mail')
 const { hasPermission } = require('../utils')
+const stripe = require('../stripe')
 
 const mutations = {
   async createItem (parent, args, ctx, info) {
@@ -193,6 +194,54 @@ const mutations = {
     if (!cartItem) throw new Error('Cart item does not exist or belong to user')
 
     return ctx.db.mutation.deleteCartItem({ where: { id: args.id } }, info)
+  },
+  async createOrder (parent, args, ctx, info) {
+    if (!ctx.request.userId) throw new Error('Permissions denied')
+
+    const user = await ctx.db.query.user({ where: { id: ctx.request.userId } }, `{
+      id
+      name
+      email
+      cart {
+        id
+        quantity
+        item { id name price description image}
+      }
+    }`)
+
+    const amount = user.cart.reduce((tally, cartItem) => tally + (cartItem.quantity * cartItem.item.price), 0)
+
+    const charge = await stripe.charges.create({
+      amount,
+      currency: 'USD',
+      source: args.token
+    })
+
+    const orderItems = user.cart.map(cartItem => {
+      const orderItem = {
+        quantity: cartItem.quantity,
+        user: { connect: { id: ctx.request.userId } },
+        ...cartItem.item
+      }
+      delete orderItem.id
+
+      return orderItem
+    })
+
+    const order = await ctx.db.mutation.createOrder({
+      data: {
+        total: charge.amount,
+        charge: charge.id,
+        items: { create: orderItems },
+        user: { connect: { id: ctx.request.userId } }
+      }
+    })
+
+    const cartItemIds = user.cart.map(item => item.id)
+
+    await ctx.db.mutation.deleteManyCartItems({ where: { id_in: cartItemIds } })
+
+    return order
   }
 };
 
