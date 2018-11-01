@@ -9,7 +9,7 @@ const fakeItem = () => ({
   price: 5000,
   user: null,
   image: 'dog-small.jpg',
-  title: 'dogs are best',
+  name: 'dogs are best',
   description: 'dogs',
   largeImage: 'dog.jpg',
 });
@@ -28,7 +28,7 @@ const fakeOrderItem = () => ({
   __typename: 'OrderItem',
   id: casual.uuid,
   image: `${casual.word}.jpg`,
-  title: casual.words(),
+  name: casual.words(),
   price: 4234,
   quantity: 1,
   description: casual.words(),

@@ -5,7 +5,7 @@ import { Query } from 'react-apollo'
 import { perPage } from '../config'
 import Head from 'next/head'
 import Link from 'next/link'
-const PAGINATION_QUERY = gql`
+export const PAGINATION_QUERY = gql`
   query PAGINATION_QUERY {
     itemsConnection {
       aggregate {
@@ -25,7 +25,7 @@ const Pagination = props => (
       const page = props.page
 
       return (
-        <PaginationStyles>
+        <PaginationStyles data-test="pagination">
           <Head>
             <title>Sick Fits | Page {page} of {pages}</title>
           </Head>
@@ -38,7 +38,7 @@ const Pagination = props => (
               ← Prev  
             </a>
           </Link>
-          <div>Page {page} of {pages}</div>
+          <div>Page {page} of <span className="totalPages">{pages}</span></div>
           <div>{count} items total!</div>
           <Link 
             prefetch

@@ -25,7 +25,7 @@ const Card = styled.div`
     font-size: 2rem;
   }
 `
-const SINGLE_ITEM_QUERY = gql`
+export const SINGLE_ITEM_QUERY = gql`
   query SINGLE_ITEM_QUERY($id: ID!) {
     item(where: { id: $id }) {
       id,
@@ -57,7 +57,7 @@ export default class SingleItem extends Component {
               </Head>
               <img src={item.largeImage} />
               <div className="details">
-                Viewing {item.name}
+                <h2>Viewing {item.name}</h2>
                 <p>{item.description}</p>
               </div>
             </Card>
