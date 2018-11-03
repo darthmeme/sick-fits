@@ -9,8 +9,8 @@ const fakeItem = () => ({
   price: 5000,
   user: null,
   image: 'dog-small.jpg',
-  name: 'dogs are best',
-  description: 'dogs',
+  name: 'dog',
+  description: 'dogs are best',
   largeImage: 'dog.jpg',
 });
 
@@ -20,7 +20,6 @@ const fakeUser = () => ({
   name: casual.name,
   email: casual.email,
   permissions: ['ADMIN'],
-  orders: [],
   cart: [],
 });
 

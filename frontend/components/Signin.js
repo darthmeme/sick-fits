@@ -4,7 +4,8 @@ import gql from 'graphql-tag'
 import Error from './ErrorMessage'
 import Form from './styles/Form';
 import { CURRENT_USER_QUERY } from './User'
-const SIGNIN_MUTATION = gql`
+
+export const SIGNIN_MUTATION = gql`
   mutation SIGNIN_MUTATION($email: String!, $password: String!) {
     signin(email: $email, password: $password) {
       name,

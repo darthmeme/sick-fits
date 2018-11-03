@@ -40,4 +40,4 @@ server.start({
     credentials: true,
     origin: process.env.FRONTEND_URL
   }
-}, () => console.log('Server is now running.'))
+}, data => console.log(`Server is now running on port ${data.port}`))

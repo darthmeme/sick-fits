@@ -14,7 +14,7 @@ exports[`<SingleItem /> error with a not found item 1`] = `
 exports[`<SingleItem /> renders with proper data 1`] = `
 <h2>
   Viewing 
-  dogs are best
+  dog
 </h2>
 `;
 
@@ -26,6 +26,6 @@ exports[`<SingleItem /> renders with proper data 2`] = `
 
 exports[`<SingleItem /> renders with proper data 3`] = `
 <p>
-  dogs
+  dogs are best
 </p>
 `;

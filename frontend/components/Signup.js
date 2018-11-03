@@ -5,7 +5,7 @@ import Error from './ErrorMessage'
 import Form from './styles/Form';
 import { CREATE_USER_QUERY, CURRENT_USER_QUERY } from './User'
 
-const CREATE_USER_MUTATION = gql`
+export const CREATE_USER_MUTATION = gql`
   mutation CREATE_USER_MUTATION($name: String!, $email: String!, $password: String!) {
     signup(name: $name, email: $email, password: $password) {
       name,
