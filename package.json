@@ -1,5 +1,0 @@
-{
-  "dependencies": {
-    "nodemailer-mailgun-transport": "^1.4.0"
-  }
-}
